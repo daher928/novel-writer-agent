@@ -1,91 +1,53 @@
-# LangChain LangGraph Agent
+# Novel Writer Agent
 
-A production-grade AI agent framework built with LangChain and LangGraph, designed for scalable autonomous workflows and enterprise applications.
+An autonomous AI agent that writes one page of a novel daily, inspired by real-world factors like mood, world news, and authentic writer influences. This agent creates compelling fiction by analyzing current events, emotional patterns, and literary styles to produce consistent, engaging narrative content.
 
 ## Overview
 
-This repository provides a robust foundation for building intelligent agents that can handle complex, multi-step tasks through advanced reasoning and tool integration. The architecture leverages LangGraph's state management capabilities and LangChain's comprehensive ecosystem to deliver reliable, maintainable agent solutions.
+The Novel Writer Agent is a creative AI system that functions as an autonomous book author, crafting original fiction with daily consistency. It draws inspiration from multiple real-world sources to create authentic, emotionally resonant storytelling that evolves with current events and human experiences.
 
 ## Key Features
 
-- **🔄 State Management**: Advanced state persistence and recovery mechanisms
-- **🔧 Tool Integration**: Seamless integration with external APIs and services
-- **📊 Observability**: Comprehensive logging, monitoring, and debugging capabilities
-- **⚡ Performance**: Optimized for high-throughput production environments
-- **🛡️ Security**: Built-in security measures and input validation
-- **🔌 Extensible**: Modular architecture for easy customization and extension
+- **📚 Daily Writing**: Automatically generates one page of novel content every day
+- **🌍 World News Integration**: Incorporates current events and global happenings into narrative themes
+- **😊 Mood Analysis**: Adapts writing style and tone based on emotional and atmospheric factors
+- **✍️ Writer Inspiration**: Emulates authentic writer behaviors, routines, and creative processes
+- **📖 Narrative Consistency**: Maintains character development and plot coherence across daily entries
+- **🎨 Style Adaptation**: Evolves writing style based on genre, mood, and thematic requirements
 
-## Architecture
+## How It Works
 
-The agent framework follows enterprise-grade design patterns:
+The agent operates on a daily cycle:
 
-```
-┌─────────────────┐    ┌──────────────────┐    ┌─────────────────┐
-│   Input Layer   │───▶│   Agent Core     │───▶│  Output Layer   │
-│                 │    │                  │    │                 │
-│ • Validation    │    │ • LangGraph      │    │ • Formatters    │
-│ • Preprocessing │    │ • State Mgmt     │    │ • Validators    │
-│ • Routing       │    │ • Tool Calling   │    │ • Responses     │
-└─────────────────┘    └──────────────────┘    └─────────────────┘
-                              │
-                              ▼
-                       ┌──────────────────┐
-                       │   Tool Ecosystem │
-                       │                  │
-                       │ • APIs           │
-                       │ • Databases      │
-                       │ • Services       │
-                       └──────────────────┘
-```
+1. **Morning Analysis**: Scans world news, weather, and cultural events
+2. **Mood Assessment**: Analyzes current emotional and atmospheric conditions
+3. **Creative Synthesis**: Combines real-world inputs with ongoing narrative threads
+4. **Daily Writing**: Generates one page (~250-300 words) of novel content
+5. **Story Continuity**: Updates character arcs and plot progression
+6. **Archive & Reflect**: Saves the day's work and prepares for tomorrow's inspiration
 
 ## Installation
 
 ### Prerequisites
 
 - Python 3.9+
-- Poetry (recommended) or pip
-- OpenAI API key (or other LLM provider)
+- OpenAI API key or other LLM provider
+- News API access (for world events)
+- Weather API access (for atmospheric inspiration)
 
 ### Setup
 
 ```bash
 # Clone the repository
-git clone https://github.com/daher928/langchain-langgraph-agent.git
-cd langchain-langgraph-agent
+git clone https://github.com/daher928/novel-writer-agent.git
+cd novel-writer-agent
 
 # Install dependencies
-poetry install
-# or with pip
 pip install -r requirements.txt
 
 # Set up environment variables
 cp .env.example .env
-# Edit .env with your configuration
-```
-
-## Quick Start
-
-```python
-from agent import AgentFramework
-from tools import default_tools
-
-# Initialize the agent
-agent = AgentFramework(
-    tools=default_tools,
-    model_config={
-        "provider": "openai",
-        "model": "gpt-4",
-        "temperature": 0.1
-    }
-)
-
-# Run a task
-result = agent.run(
-    task="Analyze the quarterly sales data and generate insights",
-    context={"data_source": "sales_db"}
-)
-
-print(result.output)
+# Edit .env with your API keys and configuration
 ```
 
 ## Configuration
@@ -93,251 +55,194 @@ print(result.output)
 ### Environment Variables
 
 | Variable | Description | Required |
-|----------|-------------|---------|
-| `OPENAI_API_KEY` | OpenAI API key | Yes |
-| `LOG_LEVEL` | Logging level (DEBUG, INFO, WARN, ERROR) | No |
-| `MAX_ITERATIONS` | Maximum agent iterations | No |
-| `TIMEOUT` | Task timeout in seconds | No |
+|----------|-------------|----------|
+| OPENAI_API_KEY | OpenAI API key for text generation | Yes |
+| NEWS_API_KEY | News API key for current events | Yes |
+| WEATHER_API_KEY | Weather API key for atmospheric data | No |
+| WRITING_TIME | Daily writing time (default: 09:00) | No |
+| TARGET_WORDS | Target words per page (default: 300) | No |
 
-### Agent Configuration
+### Novel Settings
 
 ```yaml
-# config/agent.yaml
-model:
-  provider: openai
-  model: gpt-4
-  temperature: 0.1
-  max_tokens: 2000
-
-tools:
-  enabled:
-    - web_search
-    - calculator
-    - file_processor
-  timeout: 30
-
-state:
-  persistence: true
-  backend: redis  # or memory, file
-
-logging:
-  level: INFO
-  format: structured
-```
-
-## Advanced Usage
-
-### Custom Tools
-
-```python
-from agent.tools import BaseTool
-
-class CustomDataAnalyzer(BaseTool):
-    name = "data_analyzer"
-    description = "Analyze datasets and generate insights"
+# config/novel.yaml
+novel:
+  title: "Your Novel Title"
+  genre: "literary fiction"  # or mystery, romance, sci-fi, etc.
+  target_length: 80000  # target word count
+  voice: "third-person"  # or first-person
+  
+characters:
+  protagonist:
+    name: "Main Character"
+    age: 30
+    background: "Character background"
     
-    def _run(self, data_path: str) -> str:
-        # Implementation here
-        return analysis_result
-
-# Register the tool
-agent.register_tool(CustomDataAnalyzer())
+writing_style:
+  complexity: "moderate"  # simple, moderate, complex
+  tone: "contemplative"   # humorous, dark, light, contemplative
+  pacing: "steady"        # fast, steady, slow
 ```
 
-### State Checkpoints
+## Quick Start
 
 ```python
-# Save agent state
-checkpoint_id = agent.save_checkpoint()
+from novel_agent import NovelWriterAgent
 
-# Restore from checkpoint
-agent.restore_checkpoint(checkpoint_id)
+# Initialize the agent
+writer = NovelWriterAgent(
+    novel_config="config/novel.yaml",
+    api_keys={
+        "openai": "your-openai-key",
+        "news": "your-news-api-key"
+    }
+)
+
+# Generate today's page
+today_page = writer.write_daily_page()
+print(today_page.content)
+
+# Get writing statistics
+stats = writer.get_progress_stats()
+print(f"Total pages: {stats.total_pages}")
+print(f"Total words: {stats.total_words}")
 ```
 
-### Async Operations
+## Daily Writing Process
 
+The agent follows a sophisticated creative process:
+
+### 1. Environmental Scanning
+- Analyzes current news headlines
+- Checks weather and atmospheric conditions
+- Reviews cultural events and trends
+- Assesses general mood indicators
+
+### 2. Creative Integration
+- Maps real-world events to narrative themes
+- Identifies emotional undertones
+- Selects appropriate writing mood and style
+- Plans character reactions and developments
+
+### 3. Content Generation
+- Writes one cohesive page of fiction
+- Maintains continuity with previous pages
+- Incorporates daily inspirations subtly
+- Ensures character voice consistency
+
+### 4. Quality Assurance
+- Reviews for narrative coherence
+- Checks character consistency
+- Validates emotional authenticity
+- Ensures appropriate pacing
+
+## Features in Detail
+
+### News Integration
+The agent doesn't simply copy news events but transforms them into:
+- Character motivations and conflicts
+- Background atmospheric details
+- Subtle thematic elements
+- Emotional undertones and tensions
+
+### Mood Analysis
+Daily mood assessment considers:
+- Weather patterns and seasonal changes
+- Global news sentiment
+- Cultural events and celebrations
+- Historical significance of the date
+
+### Writer Authenticity
+Emulates real writer behaviors:
+- Morning coffee ritual simulation
+- Writer's block handling
+- Creative breakthrough moments
+- Editing and revision processes
+
+## Monitoring & Analytics
+
+### Writing Statistics
+- Daily word count tracking
+- Character development metrics
+- Plot progression analysis
+- Style consistency measurements
+
+### Quality Metrics
+- Narrative coherence scores
+- Character voice consistency
+- Emotional authenticity ratings
+- Reader engagement predictions
+
+## Customization
+
+### Custom Writing Prompts
 ```python
-import asyncio
+# Add custom inspiration sources
+writer.add_inspiration_source("daily_quotes")
+writer.add_inspiration_source("historical_events")
 
-async def run_agent_async():
-    result = await agent.arun(
-        task="Process multiple documents in parallel",
-        context={"documents": document_list}
-    )
-    return result
-
-result = asyncio.run(run_agent_async())
+# Customize writing style
+writer.set_style_preference("minimalist")
+writer.set_emotional_range("melancholic_to_hopeful")
 ```
 
-## Monitoring & Observability
-
-### Metrics
-
-- Task completion rates
-- Tool usage statistics
-- Performance metrics
-- Error rates and types
-
-### Logging
-
-```python
-import logging
-from agent.logging import setup_logging
-
-setup_logging(level="INFO", format="json")
-logger = logging.getLogger(__name__)
-
-# Structured logging is automatically handled
-```
-
-### Health Checks
-
-```bash
-# Check agent health
-curl http://localhost:8000/health
-
-# Get metrics
-curl http://localhost:8000/metrics
-```
-
-## Development
-
-### Running Tests
-
-```bash
-# Run all tests
-poetry run pytest
-
-# Run with coverage
-poetry run pytest --cov=agent
-
-# Run specific test suite
-poetry run pytest tests/unit/
-```
-
-### Code Quality
-
-```bash
-# Format code
-poetry run black .
-poetry run isort .
-
-# Lint code
-poetry run flake8
-poetry run mypy agent/
-```
-
-### Contributing
-
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
+### Genre-Specific Modules
+- Mystery: Crime news integration, red herrings
+- Romance: Relationship dynamics, emotional beats
+- Sci-Fi: Technology trends, scientific discoveries
+- Fantasy: Mythological themes, archetypal patterns
 
 ## Deployment
 
-### Docker
-
-```dockerfile
-# Use the provided Dockerfile
-docker build -t langchain-agent .
-docker run -p 8000:8000 langchain-agent
-```
-
-### Kubernetes
-
+### Automated Daily Writing
 ```bash
-# Apply Kubernetes manifests
-kubectl apply -f k8s/
+# Set up daily cron job
+0 9 * * * cd /path/to/novel-writer-agent && python daily_write.py
 ```
 
-### Production Considerations
+### Cloud Deployment
+- Docker containerization included
+- AWS Lambda functions for serverless operation
+- Google Cloud Functions support
+- Azure Functions compatibility
 
-- Use environment-specific configurations
-- Implement proper secret management
-- Set up monitoring and alerting
-- Configure auto-scaling based on load
-- Implement proper backup strategies
+## Example Output
 
-## Performance
+*Page 1 - Written on a rainy Tuesday during international tensions:*
 
-### Benchmarks
+> The rain drummed against Margaret's window with an urgency that matched her heartbeat. She hadn't slept well—few had, given the morning's news from across the ocean. The world felt smaller somehow, more fragile, as if the threads holding everything together had grown thin overnight.
+> 
+> She pulled her shawl tighter and moved to the kitchen, where the familiar ritual of coffee promised a anchor in the shifting day. The beans were from a small farm in Colombia, a detail that once seemed romantic but now carried weight—how many hands had touched them, how many lives intersected in this simple morning pleasure?
+> 
+> Outside, the city stirred with its usual determination, people hurrying to work despite the weather, despite the uncertainty that seemed to hang in the air like humidity. Margaret watched them from her third-floor window, each figure a story moving through the rain...
 
-| Metric | Value |
-|--------|-------|
-| Tasks/minute | 500+ |
-| Response time (p95) | < 2s |
-| Memory usage | < 512MB |
-| CPU utilization | < 30% |
+## Contributing
 
-### Optimization Tips
-
-- Use connection pooling for external services
-- Implement caching for frequently accessed data
-- Optimize tool selection and ordering
-- Use async operations for I/O bound tasks
-
-## Security
-
-### Best Practices
-
-- Input validation and sanitization
-- API key rotation
-- Rate limiting
-- Audit logging
-- Secure defaults
-
-### Compliance
-
-- SOC 2 Type II compatible
-- GDPR compliant data handling
-- Industry-standard encryption
-
-## Roadmap
-
-### Current Version (v1.0)
-- ✅ Core agent framework
-- ✅ Basic tool integration
-- ✅ State management
-- ✅ Production deployment
-
-### Upcoming Features (v1.1)
-- 🔄 Enhanced multi-agent coordination
-- 🔄 Advanced reasoning patterns
-- 🔄 Real-time streaming responses
-- 🔄 Visual workflow designer
-
-### Future Vision (v2.0)
-- 📋 Self-improving agents
-- 📋 Multi-modal capabilities
-- 📋 Federated learning support
-- 📋 Edge deployment options
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/creative-enhancement`)
+3. Commit your changes (`git commit -m 'Add new inspiration source'`)
+4. Push to the branch (`git push origin feature/creative-enhancement`)
+5. Open a Pull Request
 
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-## Support
-
-### Community
-
-- [GitHub Discussions](https://github.com/daher928/langchain-langgraph-agent/discussions)
-- [Stack Overflow](https://stackoverflow.com/questions/tagged/langchain-langgraph-agent)
-
-### Enterprise Support
-
-For enterprise support, custom development, or consulting services, please contact [support@example.com](mailto:support@example.com).
-
 ## Acknowledgments
 
-- [LangChain](https://github.com/langchain-ai/langchain) - Foundational framework
-- [LangGraph](https://github.com/langchain-ai/langgraph) - State management and workflows
-- [OpenAI](https://openai.com) - Language model capabilities
-- Contributors and the open-source community
+- **OpenAI** - For GPT models that enable creative writing
+- **News API** - For real-world event integration
+- **The writing community** - For inspiration on authentic creative processes
+- **Daily writers everywhere** - Who prove that consistency creates magic
+
+## Support
+
+For questions, suggestions, or to share your novel's progress:
+- [GitHub Issues](https://github.com/daher928/novel-writer-agent/issues)
+- [Discussions](https://github.com/daher928/novel-writer-agent/discussions)
 
 ---
 
-**Built with ❤️ for the AI agent ecosystem**
+*"Every day brings new inspiration. Every page brings us closer to the story only we can tell."*
 
-For more information, visit our [documentation](https://github.com/daher928/langchain-langgraph-agent/wiki) or check out the [examples](examples/) directory.
+Built with ❤️ for writers, dreamers, and the stories that need to be told.
