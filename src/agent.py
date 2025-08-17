@@ -1,21 +1,17 @@
 """Main Novel Writer Agent Implementation
-
 This module contains the core NovelWriterAgent class that handles
 Romance/Fantasy hybrid novel generation using LangChain and LangGraph.
 """
-
 import json
 import os
 from datetime import datetime
 from typing import Dict, List, Optional, Any
-
 from langchain.schema import Document
 from langchain.llms import OpenAI
 from langchain.chains import LLMChain
 from langchain.prompts import PromptTemplate
 from langgraph.graph import StateGraph
 from pydantic import BaseModel, Field
-
 
 class NovelConfig(BaseModel):
     """Configuration model for novel settings."""
@@ -30,7 +26,6 @@ class NovelConfig(BaseModel):
         "pacing": "steady"
     })
 
-
 class WritingContext(BaseModel):
     """Context information for daily writing."""
     date: datetime
@@ -39,7 +34,6 @@ class WritingContext(BaseModel):
     weather_context: str = ""
     current_chapter: int = 1
     word_count: int = 0
-
 
 class NovelWriterAgent:
     """Romance/Fantasy Novel Writer Agent using LangChain and LangGraph.
@@ -60,6 +54,9 @@ class NovelWriterAgent:
         self.llm = self._initialize_llm()
         self.graph = self._build_writing_graph()
         self.context = WritingContext(date=datetime.now())
+        
+        # Initialize story state for narrative continuity
+        self.story_state = self.load_story_state()
         
     def _load_config(self, config_file: Optional[str]) -> NovelConfig:
         """Load configuration from file or use defaults.
@@ -99,6 +96,55 @@ class NovelWriterAgent:
         # - Fantasy element generation
         # - Page composition
         return StateGraph({})
+    
+    def load_story_state(self, filepath: str = "story_state.json") -> Dict[str, Any]:
+        """Load story state from JSON file for narrative continuity.
+        
+        Args:
+            filepath: Path to story state file
+            
+        Returns:
+            Dict containing story state or default state if file doesn't exist
+        """
+        try:
+            with open(filepath, 'r') as f:
+                return json.load(f)
+        except FileNotFoundError:
+            # Return default story state if file doesn't exist
+            return {
+                "main_character": {
+                    "name": "Margaret",
+                    "age": 32,
+                    "traits": ["curious", "resilient", "kind"],
+                    "arcs": ["facing loneliness", "discovering magic in the city"]
+                },
+                "recent_events": [
+                    "Moved to a new apartment",
+                    "First encounter with magical street vendor"
+                ]
+            }
+    
+    def update_story_state(self, new_event: str) -> None:
+        """Update story state with new events and character developments.
+        
+        Args:
+            new_event: Description of new event to add to recent events
+        """
+        # Add new event to recent events
+        self.story_state["recent_events"].append(new_event)
+        
+        # Keep only the last 5 events to maintain relevance
+        if len(self.story_state["recent_events"]) > 5:
+            self.story_state["recent_events"] = self.story_state["recent_events"][-5:]
+    
+    def save_story_state(self, filepath: str = "story_state.json") -> None:
+        """Save current story state to JSON file.
+        
+        Args:
+            filepath: Path to save story state file
+        """
+        with open(filepath, 'w') as f:
+            json.dump(self.story_state, f, indent=2)
     
     def ingest_daily_news(self) -> Dict[str, Any]:
         """Ingest and analyze daily news for writing inspiration.
@@ -146,6 +192,7 @@ class NovelWriterAgent:
         This method generates a single page (~250-300 words) of novel content
         that seamlessly blends romance and fantasy elements while incorporating
         subtle inspiration from current events, mood, and atmospheric factors.
+        Uses story memory for narrative continuity.
         
         Returns:
             Dict containing the generated page content, metadata, and statistics
@@ -157,21 +204,20 @@ class NovelWriterAgent:
         news_data = self.ingest_daily_news()
         mood_data = self.analyze_mood_context()
         
-        # TODO: Implement the actual page generation
-        # This should:
-        # - Use the LangGraph workflow
-        # - Generate romance elements
-        # - Generate fantasy elements
-        # - Weave in current inspiration
-        # - Maintain narrative continuity
-        # - Ensure appropriate pacing
-        
-        # Placeholder content
-        page_content = self._generate_placeholder_content()
+        # Generate page content using story memory for continuity
+        page_content = self._generate_page_with_memory(news_data, mood_data)
         
         # Update word count and chapter tracking
         word_count = len(page_content.split())
         self.context.word_count += word_count
+        
+        # Create new event for story continuity
+        character_name = self.story_state["main_character"]["name"]
+        new_event = f"{character_name} experiences a significant moment in her magical journey"
+        
+        # Update and save story state
+        self.update_story_state(new_event)
+        self.save_story_state()
         
         return {
             "content": page_content,
@@ -182,32 +228,51 @@ class NovelWriterAgent:
                 "news": news_data,
                 "mood": mood_data
             },
+            "story_continuity": {
+                "character_name": character_name,
+                "character_traits": self.story_state["main_character"]["traits"],
+                "current_arcs": self.story_state["main_character"]["arcs"],
+                "recent_events": self.story_state["recent_events"]
+            },
             "metadata": {
                 "genre": self.config.genre,
                 "total_words": self.context.word_count
             }
         }
     
-    def _generate_placeholder_content(self) -> str:
-        """Generate placeholder content for development purposes.
+    def _generate_page_with_memory(self, news_data: Dict[str, Any], mood_data: Dict[str, Any]) -> str:
+        """Generate page content using story memory for narrative continuity.
         
+        Args:
+            news_data: Current news analysis data
+            mood_data: Current mood analysis data
+            
         Returns:
-            str: Placeholder page content
+            str: Generated page content incorporating story memory
         """
+        # Extract story memory elements
+        character = self.story_state["main_character"]
+        character_name = character["name"]
+        character_traits = ", ".join(character["traits"])
+        character_arcs = character["arcs"]
+        recent_events = self.story_state["recent_events"]
+        
+        # TODO: Implement actual LLM-based generation using story memory
+        # For now, return enhanced placeholder content that uses memory
         return (
-            "The morning mist clung to the ancient forest like secrets waiting to be told. "
-            "Elena stepped carefully along the moss-covered path, her heart racing with "
-            "anticipation and something deeper—a pull she couldn't quite name. The pendant "
-            "at her throat grew warm, responding to the magic that thrummed through these "
-            "woods like a hidden heartbeat.\n\n"
-            "Behind her, Marcus followed in respectful silence, though she could feel his "
-            "presence like a warm cloak against the cool dawn air. He had sworn to protect "
-            "her on this journey, but Elena sensed there was more to his devotion than mere "
-            "duty. The way his eyes softened when he looked at her, the gentle strength in "
-            "his voice when he spoke her name—these were not the gestures of a simple guard.\n\n"
-            "'The Thornwood grows restless,' she murmured, watching as silver leaves danced "
-            "without wind. 'Something is changing.' Her words carried on the morning air, "
-            "weaving between them like an unspoken promise of adventures yet to come."
+            f"{character_name} stepped through the morning mist, her {character_traits} nature "
+            f"guiding her forward despite the uncertainty ahead. The recent events—"
+            f"her move to the apartment and the encounter with the magical vendor—had "
+            f"awakened something within her that she was only beginning to understand.\n\n"
+            f"The city around her hummed with an energy that matched her own restless spirit. "
+            f"Each step felt purposeful now, as if the loneliness that had driven her here "
+            f"was transforming into something more powerful—a connection to the magic "
+            f"that pulsed through the urban landscape like a hidden heartbeat.\n\n"
+            f"As she walked, {character_name} reflected on how much had changed since "
+            f"moving here. The magical street vendor's knowing smile haunted her thoughts, "
+            f"a reminder that her journey toward discovering the city's magic was just "
+            f"beginning. Whatever came next, she felt ready to embrace it with the "
+            f"curiosity and resilience that had always defined her."
         )
     
     def get_progress_stats(self) -> Dict[str, Any]:
