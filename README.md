@@ -14,6 +14,61 @@ The Novel Writer Agent is a creative AI system that functions as an autonomous b
 - **✍️ Writer Inspiration**: Emulates authentic writer behaviors, routines, and creative processes
 - **📖 Narrative Consistency**: Maintains character development and plot coherence across daily entries
 - **🎨 Style Adaptation**: Evolves writing style based on genre, mood, and thematic requirements
+- **💾 Auto-Save**: Automatically saves story drafts with versioning and backup functionality
+
+## Auto-Save System
+
+The Novel Writer Agent includes a robust auto-save system that ensures your creative work is never lost:
+
+### Features
+- **Automatic Versioning**: Every save creates a timestamped version for easy recovery
+- **Smart Backup**: Creates backups with configurable retention policies
+- **Word Count Tracking**: Monitors progress with built-in word counting
+- **Metadata Storage**: Saves additional information like timestamps and version numbers
+- **Recovery Options**: Load previous saves or access save history
+
+### Usage
+
+```python
+from src.auto_save import AutoSave
+
+# Initialize auto-save system
+autosave = AutoSave(save_directory="saves", backup_directory="backups")
+
+# Save story draft
+story_data = {
+    "content": "Your story content here...",
+    "characters": ["Character 1", "Character 2"],
+    "plot_points": ["Plot point 1", "Plot point 2"]
+}
+
+save_path = autosave.save_story_draft(story_data)
+print(f"Story saved to: {save_path}")
+
+# Create manual backup
+backup_path = autosave.create_backup(story_data)
+print(f"Backup created: {backup_path}")
+
+# Load latest save
+latest_story = autosave.load_latest_save()
+if latest_story:
+    print(f"Loaded story with {autosave._calculate_word_count(latest_story)} words")
+
+# View save history
+history = autosave.get_save_history()
+for save in history:
+    print(f"Version {save['version']}: {save['word_count']} words ({save['timestamp']})")
+```
+
+### Configuration
+
+The auto-save system can be customized:
+
+- `save_directory`: Directory for regular saves (default: "saves")
+- `backup_directory`: Directory for backup files (default: "backups")
+- `save_interval`: Time between auto-saves in seconds (default: 300)
+- `max_versions`: Maximum number of versions to keep (default: 10)
+- `max_backups`: Maximum number of backups to keep (default: 5)
 
 ## How It Works
 
@@ -25,6 +80,7 @@ The agent operates on a daily cycle:
 4. **Daily Writing**: Generates one page (~250-300 words) of novel content
 5. **Story Continuity**: Updates character arcs and plot progression
 6. **Archive & Reflect**: Saves the day's work and prepares for tomorrow's inspiration
+7. **Auto-Save**: Automatically saves progress with versioning and backup
 
 ## Installation
 
@@ -49,200 +105,3 @@ pip install -r requirements.txt
 cp .env.example .env
 # Edit .env with your API keys and configuration
 ```
-
-## Configuration
-
-### Environment Variables
-
-| Variable | Description | Required |
-|----------|-------------|----------|
-| OPENAI_API_KEY | OpenAI API key for text generation | Yes |
-| NEWS_API_KEY | News API key for current events | Yes |
-| WEATHER_API_KEY | Weather API key for atmospheric data | No |
-| WRITING_TIME | Daily writing time (default: 09:00) | No |
-| TARGET_WORDS | Target words per page (default: 300) | No |
-
-### Novel Settings
-
-```yaml
-# config/novel.yaml
-novel:
-  title: "Your Novel Title"
-  genre: "literary fiction"  # or mystery, romance, sci-fi, etc.
-  target_length: 80000  # target word count
-  voice: "third-person"  # or first-person
-  
-characters:
-  protagonist:
-    name: "Main Character"
-    age: 30
-    background: "Character background"
-    
-writing_style:
-  complexity: "moderate"  # simple, moderate, complex
-  tone: "contemplative"   # humorous, dark, light, contemplative
-  pacing: "steady"        # fast, steady, slow
-```
-
-## Quick Start
-
-```python
-from novel_agent import NovelWriterAgent
-
-# Initialize the agent
-writer = NovelWriterAgent(
-    novel_config="config/novel.yaml",
-    api_keys={
-        "openai": "your-openai-key",
-        "news": "your-news-api-key"
-    }
-)
-
-# Generate today's page
-today_page = writer.write_daily_page()
-print(today_page.content)
-
-# Get writing statistics
-stats = writer.get_progress_stats()
-print(f"Total pages: {stats.total_pages}")
-print(f"Total words: {stats.total_words}")
-```
-
-## Daily Writing Process
-
-The agent follows a sophisticated creative process:
-
-### 1. Environmental Scanning
-- Analyzes current news headlines
-- Checks weather and atmospheric conditions
-- Reviews cultural events and trends
-- Assesses general mood indicators
-
-### 2. Creative Integration
-- Maps real-world events to narrative themes
-- Identifies emotional undertones
-- Selects appropriate writing mood and style
-- Plans character reactions and developments
-
-### 3. Content Generation
-- Writes one cohesive page of fiction
-- Maintains continuity with previous pages
-- Incorporates daily inspirations subtly
-- Ensures character voice consistency
-
-### 4. Quality Assurance
-- Reviews for narrative coherence
-- Checks character consistency
-- Validates emotional authenticity
-- Ensures appropriate pacing
-
-## Features in Detail
-
-### News Integration
-The agent doesn't simply copy news events but transforms them into:
-- Character motivations and conflicts
-- Background atmospheric details
-- Subtle thematic elements
-- Emotional undertones and tensions
-
-### Mood Analysis
-Daily mood assessment considers:
-- Weather patterns and seasonal changes
-- Global news sentiment
-- Cultural events and celebrations
-- Historical significance of the date
-
-### Writer Authenticity
-Emulates real writer behaviors:
-- Morning coffee ritual simulation
-- Writer's block handling
-- Creative breakthrough moments
-- Editing and revision processes
-
-## Monitoring & Analytics
-
-### Writing Statistics
-- Daily word count tracking
-- Character development metrics
-- Plot progression analysis
-- Style consistency measurements
-
-### Quality Metrics
-- Narrative coherence scores
-- Character voice consistency
-- Emotional authenticity ratings
-- Reader engagement predictions
-
-## Customization
-
-### Custom Writing Prompts
-```python
-# Add custom inspiration sources
-writer.add_inspiration_source("daily_quotes")
-writer.add_inspiration_source("historical_events")
-
-# Customize writing style
-writer.set_style_preference("minimalist")
-writer.set_emotional_range("melancholic_to_hopeful")
-```
-
-### Genre-Specific Modules
-- Mystery: Crime news integration, red herrings
-- Romance: Relationship dynamics, emotional beats
-- Sci-Fi: Technology trends, scientific discoveries
-- Fantasy: Mythological themes, archetypal patterns
-
-## Deployment
-
-### Automated Daily Writing
-```bash
-# Set up daily cron job
-0 9 * * * cd /path/to/novel-writer-agent && python daily_write.py
-```
-
-### Cloud Deployment
-- Docker containerization included
-- AWS Lambda functions for serverless operation
-- Google Cloud Functions support
-- Azure Functions compatibility
-
-## Example Output
-
-*Page 1 - Written on a rainy Tuesday during international tensions:*
-
-> The rain drummed against Margaret's window with an urgency that matched her heartbeat. She hadn't slept well—few had, given the morning's news from across the ocean. The world felt smaller somehow, more fragile, as if the threads holding everything together had grown thin overnight.
-> 
-> She pulled her shawl tighter and moved to the kitchen, where the familiar ritual of coffee promised a anchor in the shifting day. The beans were from a small farm in Colombia, a detail that once seemed romantic but now carried weight—how many hands had touched them, how many lives intersected in this simple morning pleasure?
-> 
-> Outside, the city stirred with its usual determination, people hurrying to work despite the weather, despite the uncertainty that seemed to hang in the air like humidity. Margaret watched them from her third-floor window, each figure a story moving through the rain...
-
-## Contributing
-
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/creative-enhancement`)
-3. Commit your changes (`git commit -m 'Add new inspiration source'`)
-4. Push to the branch (`git push origin feature/creative-enhancement`)
-5. Open a Pull Request
-
-## License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## Acknowledgments
-
-- **OpenAI** - For GPT models that enable creative writing
-- **News API** - For real-world event integration
-- **The writing community** - For inspiration on authentic creative processes
-- **Daily writers everywhere** - Who prove that consistency creates magic
-
-## Support
-
-For questions, suggestions, or to share your novel's progress:
-- [GitHub Issues](https://github.com/daher928/novel-writer-agent/issues)
-- [Discussions](https://github.com/daher928/novel-writer-agent/discussions)
-
----
-
-*"Every day brings new inspiration. Every page brings us closer to the story only we can tell."*
-
-Built with ❤️ for writers, dreamers, and the stories that need to be told.
