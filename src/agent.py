@@ -6,12 +6,19 @@ import json
 import os
 from datetime import datetime
 from typing import Dict, List, Optional, Any
+
+try:
+    import yaml
+except ImportError:
+    yaml = None
+
 from langchain.schema import Document
 from langchain.llms import OpenAI
 from langchain.chains import LLMChain
 from langchain.prompts import PromptTemplate
 from langgraph.graph import StateGraph
 from pydantic import BaseModel, Field
+
 
 class NovelConfig(BaseModel):
     """Configuration model for novel settings."""
@@ -26,6 +33,7 @@ class NovelConfig(BaseModel):
         "pacing": "steady"
     })
 
+
 class WritingContext(BaseModel):
     """Context information for daily writing."""
     date: datetime
@@ -34,6 +42,7 @@ class WritingContext(BaseModel):
     weather_context: str = ""
     current_chapter: int = 1
     word_count: int = 0
+
 
 class NovelWriterAgent:
     """Romance/Fantasy Novel Writer Agent using LangChain and LangGraph.
@@ -68,8 +77,16 @@ class NovelWriterAgent:
             NovelConfig: Loaded or default configuration
         """
         if config_file and os.path.exists(config_file):
-            # TODO: Implement YAML loading
-            pass
+            try:
+                if yaml is None:
+                    raise ImportError("PyYAML is required for config loading but not installed")
+                with open(config_file, 'r') as f:
+                    config_data = yaml.safe_load(f)
+                return NovelConfig(**config_data)
+            except (yaml.YAMLError, ImportError, Exception) as e:
+                print(f"Error loading config from {config_file}: {e}")
+                print("Falling back to default configuration")
+                return NovelConfig()
         return NovelConfig()
     
     def _initialize_llm(self) -> OpenAI:
@@ -95,7 +112,7 @@ class NovelWriterAgent:
         # - Romance element generation
         # - Fantasy element generation
         # - Page composition
-        return StateGraph({})
+        raise NotImplementedError("LangGraph workflow implementation pending")
     
     def load_story_state(self, filepath: str = "story_state.json") -> Dict[str, Any]:
         """Load story state from JSON file for narrative continuity.
@@ -158,13 +175,7 @@ class NovelWriterAgent:
         # - Analyze sentiment and themes
         # - Extract inspiration elements
         # - Filter for appropriate content
-        
-        return {
-            "headlines": [],
-            "themes": [],
-            "sentiment": "neutral",
-            "inspiration_elements": []
-        }
+        raise NotImplementedError("News API integration not yet implemented")
     
     def analyze_mood_context(self) -> Dict[str, Any]:
         """Analyze current mood and atmospheric context.
@@ -178,13 +189,7 @@ class NovelWriterAgent:
         # - Time of day/season
         # - Recent news sentiment
         # - Historical writing patterns
-        
-        return {
-            "overall_mood": "contemplative",
-            "energy_level": "moderate",
-            "emotional_tone": "hopeful",
-            "atmospheric_elements": ["autumn breeze", "golden light"]
-        }
+        raise NotImplementedError("Mood analysis not yet implemented")
     
     def write_daily_page(self) -> Dict[str, Any]:
         """Writes one page mixing romance, fantasy, and current inspiration.
@@ -201,8 +206,25 @@ class NovelWriterAgent:
         self.context.date = datetime.now()
         
         # Gather inspiration sources
-        news_data = self.ingest_daily_news()
-        mood_data = self.analyze_mood_context()
+        try:
+            news_data = self.ingest_daily_news()
+        except NotImplementedError:
+            news_data = {
+                "headlines": [],
+                "themes": [],
+                "sentiment": "neutral",
+                "inspiration_elements": []
+            }
+        
+        try:
+            mood_data = self.analyze_mood_context()
+        except NotImplementedError:
+            mood_data = {
+                "overall_mood": "contemplative",
+                "energy_level": "moderate",
+                "emotional_tone": "hopeful",
+                "atmospheric_elements": ["autumn breeze", "golden light"]
+            }
         
         # Generate page content using story memory for continuity
         page_content = self._generate_page_with_memory(news_data, mood_data)
