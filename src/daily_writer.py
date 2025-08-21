@@ -13,7 +13,7 @@ from typing import Dict, List, Optional, Any, Callable
 from pathlib import Path
 
 from .agent import NovelWriterAgent
-
+ 
 
 class DailyWriter:
     """Daily writing scheduler and manager for the Novel Writer Agent.
