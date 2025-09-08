@@ -30,7 +30,7 @@ function App() {
         </main>
         
         <footer className="app-footer">
-          <p>&copy; 2025 Novel Writer Agent. Built with React & Vite.</p>
+          <p>© 2025 Novel Writer Agent. Built with React & Vite.</p>
         </footer>
       </div>
     </Router>
