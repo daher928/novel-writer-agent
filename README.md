@@ -21,6 +21,7 @@ The Novel Writer Agent is a creative AI system that functions as an autonomous b
 The Novel Writer Agent includes a robust auto-save system that ensures your creative work is never lost:
 
 ### Features
+
 - **Automatic Versioning**: Every save creates a timestamped version for easy recovery
 - **Smart Backup**: Creates backups with configurable retention policies
 - **Word Count Tracking**: Monitors progress with built-in word counting
@@ -69,6 +70,56 @@ The auto-save system can be customized:
 - `save_interval`: Time between auto-saves in seconds (default: 300)
 - `max_versions`: Maximum number of versions to keep (default: 10)
 - `max_backups`: Maximum number of backups to keep (default: 5)
+
+## Example Daily Output
+
+### Sample Generated Content
+
+Here's an example of what the Novel Writer Agent produces on a typical day:
+
+```markdown
+**Chapter 3: Echoes of Tomorrow**
+*Generated on September 8, 2025*
+*Inspired by: Global climate summit, autumn weather patterns*
+
+Margaret stood at the edge of the research facility's observation deck, watching the automated weather sensors dance in the crisp September wind. The morning news had been filled with discussions from the climate summit in Geneva, and somehow those distant political voices seemed to whisper through the changing leaves outside her window.
+
+"The data doesn't lie," she murmured to herself, reviewing the overnight readings on her tablet. The atmospheric composition readings showed subtle shifts that aligned disturbingly well with the predictions she'd been modeling for months. Each data point felt like a piece of a vast puzzle, one that humanity was still struggling to solve.
+
+Dr. Chen appeared beside her, steam rising from his coffee cup in the cool morning air. "The algorithms picked up something interesting overnight," he said, his voice carrying that familiar mix of excitement and concern that had become their daily soundtrack.
+
+Margaret turned to face him, noting how the early light caught the worry lines around his eyes. The weight of their research—understanding patterns that could reshape how humanity approached the future—seemed to age them all a little more each day. But there was something else in his expression today, a spark that suggested discovery.
+
+"Show me," she said, following him back toward the lab where screens full of data waited to tell their story.
+
+---
+
+*Word Count: 287*
+*Characters Developed: Margaret (protagonist), Dr. Chen (colleague)*
+*Themes: Environmental consciousness, scientific discovery, human connection*
+*Next Day's Focus: The discovery in the lab data*
+```
+
+### CLI Usage
+
+Run the agent with typical arguments:
+
+```bash
+# Generate today's page with standard settings
+python cli.py --generate-daily --mood-analysis --news-integration
+
+# Run with specific genre and word count target
+python cli.py --generate-daily --genre sci-fi --target-words 300 --mood-analysis
+
+# Generate and auto-save with backup
+python cli.py --generate-daily --auto-save --create-backup --save-dir "my_novel"
+
+# Check progress and statistics
+python cli.py --show-stats --recent-history 7
+
+# Generate with custom inspiration sources
+python cli.py --generate-daily --news-sources "technology,science" --weather-location "New York"
+```
 
 ## How It Works
 
