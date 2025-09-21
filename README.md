@@ -64,7 +64,6 @@ for save in history:
 ### Configuration
 
 The auto-save system can be customized:
-
 - `save_directory`: Directory for regular saves (default: "saves")
 - `backup_directory`: Directory for backup files (default: "backups")
 - `save_interval`: Time between auto-saves in seconds (default: 300)
@@ -77,9 +76,10 @@ The auto-save system can be customized:
 
 Here's an example of what the Novel Writer Agent produces on a typical day:
 
-```markdown
 **Chapter 3: Echoes of Tomorrow**
+
 *Generated on September 8, 2025*
+
 *Inspired by: Global climate summit, autumn weather patterns*
 
 Margaret stood at the edge of the research facility's observation deck, watching the automated weather sensors dance in the crisp September wind. The morning news had been filled with discussions from the climate summit in Geneva, and somehow those distant political voices seemed to whisper through the changing leaves outside her window.
@@ -95,10 +95,12 @@ Margaret turned to face him, noting how the early light caught the worry lines a
 ---
 
 *Word Count: 287*
+
 *Characters Developed: Margaret (protagonist), Dr. Chen (colleague)*
+
 *Themes: Environmental consciousness, scientific discovery, human connection*
+
 *Next Day's Focus: The discovery in the lab data*
-```
 
 ### CLI Usage
 
@@ -156,3 +158,25 @@ pip install -r requirements.txt
 cp .env.example .env
 # Edit .env with your API keys and configuration
 ```
+
+## Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request. For major changes, please open an issue first to discuss what you would like to change.
+
+### Development Setup
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## Contact
+
+- **Author**: Daher Daher ([@daher928](https://github.com/daher928))
+- **Email**: daher.1995@gmail.com
+- **Project Link**: https://github.com/daher928/novel-writer-agent
